@@ -1,0 +1,14 @@
+# 索引文件必须提交！很多 APT 源模板会在这里写 Packages/Release，直接抄会导致源是空的
+!Packages
+!Packages.gz
+!Packages.bz2
+!Release
+!packages.json
+!repo-data.js
+
+__pycache__/
+*.pyc
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
