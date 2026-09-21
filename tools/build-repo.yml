@@ -1,0 +1,39 @@
+name: Build repo index
+
+on:
+  push:
+    branches: [main]
+    # 关键：触发路径不含 Packages / Release，否则机器人提交索引会再触发自己，死循环
+    paths:
+      - 'debs/**'
+      - 'repo.json'
+      - 'tools/gen_repo.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild index
+        run: python tools/gen_repo.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Packages Packages.gz Packages.bz2 Release packages.json repo-data.js
+          if git diff --staged --quiet; then
+            echo "索引无变化，跳过提交"
+          else
+            git commit -m "chore: rebuild index [skip ci]"
+            git push
+          fi
