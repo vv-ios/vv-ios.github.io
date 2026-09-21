@@ -73,8 +73,6 @@
   ol{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted)}
   ol li{margin-bottom:7px}
   ol strong{color:var(--text);font-weight:650}
-  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:26px}
-  footer a{color:var(--accent);text-decoration:none}
   .toast{
     position:fixed;left:50%;bottom:26px;transform:translate(-50%,72px);
     background:#1c2333;color:#fff;font-size:.87rem;padding:10px 20px;border-radius:999px;
@@ -122,11 +120,6 @@
       <li>点 <strong>添加</strong>，然后到「全部」里安装插件</li>
     </ol>
   </div>
-
-  <footer>
-    <span id="footLine">vv-ios</span>
-    · <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
-  </footer>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -153,9 +146,7 @@
   // 主页站 /user.github.io/ 与项目站 /user/repo/ 两种形态都要能匹配
   var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]*)\/?$/);
   if (m) {
-    var owner = m[1], repo = m[2] || (m[1] + ".github.io");
-    document.getElementById("repoLink").href = "https://github.com/" + owner + "/" + repo;
-    document.getElementById("footLine").textContent = owner + "/" + repo;
+    document.title = (D.name || D.label || "越狱源") + " 源 · " + m[1];
   }
 
   var accent = D.accent || "#5b8cff";
