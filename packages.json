@@ -13,18 +13,6 @@
   ],
   "packages": [
     {
-      "package": "com.vvios.hello",
-      "name": "vv-ios Hello",
-      "version": "1.0.0",
-      "architecture": "iphoneos-arm64",
-      "description": "vv-ios 源链路验证包",
-      "section": "Tweaks",
-      "author": "vv-ios",
-      "size": 682,
-      "filename": "./debs/com.vvios.hello_1.0.0_iphoneos-arm64.deb",
-      "sha256": "8bc38a25fe861b104f82cb9a55d3a4c425ddb6a0ce78a3e16b93cedf442824d2"
-    },
-    {
       "package": "com.vvios.statusbar",
       "name": "StatusBar Tweak",
       "version": "1.2.0",
@@ -37,5 +25,5 @@
       "sha256": "dff250cf3b992b04eeec8d29aebaa2f49df4b5083f7e69c3916993dc6986fd1e"
     }
   ],
-  "generated": 1789959857
+  "generated": 1789961191
 }
