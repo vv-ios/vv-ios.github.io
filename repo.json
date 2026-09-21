@@ -1,0 +1,16 @@
+{
+  "origin": "vv-ios",
+  "label": "vv-ios",
+  "name": "vv-ios",
+  "description": "vv-ios 的越狱插件源 · Dopamine / palera1n rootless",
+  "maintainer": "vv-ios <vv-ios@users.noreply.github.com>",
+  "url": "https://vv-ios.github.io/",
+  "icon": "CydiaIcon.png",
+  "accent": "#5b8cff",
+  "component": "main",
+  "codename": "ios",
+  "suite": "stable",
+  "version": "1.0",
+  "architectures": ["iphoneos-arm64", "iphoneos-arm"],
+  "featured": []
+}
