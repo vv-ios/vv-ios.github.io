@@ -1,18 +1,3 @@
-Package: com.vvios.hello
-Name: vv-ios Hello
-Version: 1.0.0
-Architecture: iphoneos-arm64
-Description: vv-ios 源链路验证包
- 装得上就说明源没问题，验证完可以删掉。
-Section: Tweaks
-Maintainer: vv-ios <vv-ios@users.noreply.github.com>
-Author: vv-ios
-Filename: ./debs/com.vvios.hello_1.0.0_iphoneos-arm64.deb
-Size: 682
-MD5sum: e5b3cab2805f9e77c9bef73bcd33787b
-SHA256: 8bc38a25fe861b104f82cb9a55d3a4c425ddb6a0ce78a3e16b93cedf442824d2
-Installed-Size: 10
-
 Package: com.vvios.statusbar
 Name: StatusBar Tweak
 Version: 1.2.0
