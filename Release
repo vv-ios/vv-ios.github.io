@@ -1,0 +1,17 @@
+Origin: vv-ios
+Label: vv-ios
+Suite: stable
+Version: 1.0
+Codename: ios
+Architectures: iphoneos-arm64 iphoneos-arm
+Components: main
+Description: vv-ios 的越狱插件源 · Dopamine / palera1n rootless
+Date: Mon, 21 Sep 2026 02:27:55 +0000
+MD5Sum:
+ 3e2f41db21c7c7edb5b4b43d91d3b56a 471 Packages
+ 56bdfc0820a675c0ae5c0422d3bcc8f1 392 Packages.gz
+ c31cc644c2da894cbb764aabcdd52c92 427 Packages.bz2
+SHA256:
+ df2da4a335feb6a6b12bea82205589514d182eb9292c791a8e6b1055ae3ca023 471 Packages
+ 471123288053bfe5854106418c70153970fe0529def07aa491d52af633ebc9e0 392 Packages.gz
+ 3032113f0f57f572b7dc85e9a3ecb4984b87523e337dae8c7c0d81bc2ceeed55 427 Packages.bz2
