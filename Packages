@@ -12,3 +12,19 @@ Size: 682
 MD5sum: e5b3cab2805f9e77c9bef73bcd33787b
 SHA256: 8bc38a25fe861b104f82cb9a55d3a4c425ddb6a0ce78a3e16b93cedf442824d2
 Installed-Size: 10
+
+Package: com.vvios.statusbar
+Name: StatusBar Tweak
+Version: 1.2.0
+Architecture: iphoneos-arm64
+Description: 状态栏自定义插件
+ 支持自定义时间格式、电量显示样式。
+Section: Tweaks
+Depends: mobilesubstrate, firmware (>= 15.0)
+Maintainer: vv-ios <vv-ios@users.noreply.github.com>
+Author: vv-ios
+Filename: ./debs/com.vvios.statusbar_1.2.0_iphoneos-arm64.deb
+Size: 810
+MD5sum: 5f8d81903fe09777ba142f7cfcf6c88f
+SHA256: dff250cf3b992b04eeec8d29aebaa2f49df4b5083f7e69c3916993dc6986fd1e
+Installed-Size: 10
