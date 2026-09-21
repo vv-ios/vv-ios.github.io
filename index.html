@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vv-ios 源</title>
+<link rel="icon" href="CydiaIcon.png">
+<style>
+  :root{
+    --accent:#5b8cff;
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --text:#1c2333;
+    --muted:#66708a;
+    --border:#e4e7f0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#12151d;--card:#1a1f2b;--text:#eef1f7;--muted:#98a1b8;--border:#2a3040;}
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:32px 18px 56px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  .head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+  .head img{width:72px;height:72px;border-radius:18px;flex:0 0 auto;
+    box-shadow:0 6px 18px rgba(0,0,0,.10);background:var(--card)}
+  h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.01em}
+  .sub{margin:0;color:var(--muted);font-size:.94rem}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:20px;margin-bottom:16px;
+  }
+  .urlrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  code.url{
+    flex:1 1 260px;min-width:0;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:.86rem;word-break:break-all;
+    background:var(--bg);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;display:flex;align-items:center;
+  }
+  button{
+    font:inherit;font-size:.93rem;font-weight:600;cursor:pointer;
+    border:1px solid transparent;border-radius:10px;padding:11px 18px;
+    transition:transform .08s ease,opacity .15s ease;
+  }
+  button:active{transform:scale(.975)}
+  .primary{background:var(--accent);color:#fff}
+  .ghost{background:transparent;color:var(--text);border-color:var(--border)}
+  .hint{color:var(--muted);font-size:.85rem;margin:12px 0 0}
+  .warn{
+    border-radius:12px;padding:13px 15px;font-size:.88rem;margin-bottom:16px;
+    background:#fff6e0;border:1px solid #f0d79a;color:#7a5a10;
+  }
+  @media (prefers-color-scheme: dark){
+    .warn{background:#2e2612;border-color:#5c4a1c;color:#e8cf92}
+  }
+  h2{font-size:1.05rem;margin:0 0 14px}
+  .pkg{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  .pkg:last-child{margin-bottom:0}
+  .pkgtop{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .pkgname{font-weight:650;font-size:.98rem}
+  .pkgver{font-family:ui-monospace,Menlo,monospace;font-size:.79rem;color:var(--muted);
+    background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 8px}
+  .pkgdesc{color:var(--muted);font-size:.87rem;margin:7px 0 0}
+  .tags{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
+  .tag{font-size:.74rem;color:var(--muted);border:1px solid var(--border);
+    border-radius:999px;padding:2px 9px}
+  .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:22px 0}
+  ol{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted)}
+  ol li{margin-bottom:7px}
+  ol strong{color:var(--text);font-weight:650}
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:26px}
+  footer a{color:var(--accent);text-decoration:none}
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,72px);
+    background:#1c2333;color:#fff;font-size:.87rem;padding:10px 20px;border-radius:999px;
+    opacity:0;transition:all .22s ease;pointer-events:none;z-index:9;
+  }
+  .toast.on{transform:translate(-50%,0);opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <img src="CydiaIcon.png" alt="源图标" onerror="this.style.visibility='hidden'">
+    <div>
+      <h1 id="repoName">vv-ios</h1>
+      <p class="sub" id="repoDesc">越狱插件源</p>
+    </div>
+  </div>
+
+  <div id="warnBox" class="warn" style="display:none">
+    <strong>⚠️ 源地址还没配置好</strong><br>
+    当前 <code>repo.json</code> 里的 <code>url</code> 还是占位符或不是 https，Sileo 无法添加此源。
+  </div>
+
+  <div class="card">
+    <div class="urlrow">
+      <code class="url" id="repoUrl">加载中…</code>
+      <button class="primary" id="addBtn">一键添加</button>
+      <button class="ghost" id="copyBtn">复制</button>
+    </div>
+    <p class="hint">在 Sileo 里点「一键添加」，或手动进入 <strong>软件源 → +</strong> 粘贴上面的地址。</p>
+  </div>
+
+  <div class="card">
+    <h2>软件包 <span id="pkgCount" style="color:var(--muted);font-weight:400"></span></h2>
+    <div id="pkgList"><div class="empty">加载中…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>如何添加</h2>
+    <ol>
+      <li>打开 <strong>Sileo</strong></li>
+      <li>进入 <strong>软件源</strong> 标签页</li>
+      <li>点左上角 <strong>+</strong>，粘贴上面的源地址</li>
+      <li>点 <strong>添加</strong>，然后到「全部」里安装插件</li>
+    </ol>
+  </div>
+
+  <footer>
+    <span id="footLine">vv-ios</span>
+    · <a id="repoLink" href="#" target="_blank" rel="noopener">GitHub</a>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 用 script 引入而不是 fetch：这样双击 file:// 打开也能显示数据 -->
+<script src="repo-data.js"></script>
+<script>
+(function(){
+  var D = window.SILEO_REPO || {};
+  var url = D.url || "";
+
+  document.getElementById("repoName").textContent = D.name || D.label || "越狱源";
+  document.getElementById("repoDesc").textContent = D.description || "";
+  document.getElementById("repoUrl").textContent = url || "(未配置)";
+  document.title = (D.name || D.label || "越狱源") + " 源";
+
+  // 协议合法性与占位符判断必须分开，否则主页站（单段路径）会被误判
+  var isHttps = /^https:\/\/[^/]+\//.test(url);
+  var isPlaceholder = /your-?name|example|<|>|\{\{/.test(url);
+  if (!isHttps || isPlaceholder || !url) {
+    document.getElementById("warnBox").style.display = "block";
+  }
+
+  // 主页站 /user.github.io/ 与项目站 /user/repo/ 两种形态都要能匹配
+  var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]*)\/?$/);
+  if (m) {
+    var owner = m[1], repo = m[2] || (m[1] + ".github.io");
+    document.getElementById("repoLink").href = "https://github.com/" + owner + "/" + repo;
+    document.getElementById("footLine").textContent = owner + "/" + repo;
+  }
+
+  var accent = D.accent || "#5b8cff";
+  document.documentElement.style.setProperty("--accent", accent);
+
+  // 包列表
+  var list = D.packages || [];
+  var box = document.getElementById("pkgList");
+  var cnt = document.getElementById("pkgCount");
+  if (!list.length) {
+    box.innerHTML = '<div class="empty">源里还没有软件包</div>';
+  } else {
+    cnt.textContent = "(" + list.length + ")";
+    box.innerHTML = list.map(function(p){
+      var tags = [p.version, p.architecture, p.section].filter(Boolean)
+        .map(function(t){ return '<span class="tag">' + esc(t) + '</span>'; }).join("");
+      return '<div class="pkg">' +
+        '<div class="pkgtop">' +
+          '<span class="pkgname">' + esc(p.name || p.package) + '</span>' +
+          (p.version ? '<span class="pkgver">v' + esc(p.version) + '</span>' : '') +
+        '</div>' +
+        '<p class="pkgdesc">' + esc(p.description || "") + '</p>' +
+        '<div class="tags">' + tags + '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  function toast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("on");
+    setTimeout(function(){ t.classList.remove("on"); }, 1700);
+  }
+
+  document.getElementById("addBtn").addEventListener("click", function(){
+    if (!isHttps || isPlaceholder) { toast("源地址未配置好"); return; }
+    location.href = "sileo://source/" + encodeURIComponent(url);
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", function(){
+    var done = function(){ toast("已复制源地址"); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e){ toast("复制失败，请手动选择"); }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>
