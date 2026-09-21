@@ -8,83 +8,250 @@
 <style>
   :root{
     --accent:#5b8cff;
-    --bg:#f6f7fb;
-    --card:#ffffff;
-    --text:#1c2333;
-    --muted:#66708a;
-    --border:#e4e7f0;
+    --accent2:#9d6cff;
+    --text:#12172a;
+    --muted:#5d6683;
+    /* 液态玻璃：半透明表面 + 高光边 */
+    --glass:rgba(255,255,255,.55);
+    --glass-strong:rgba(255,255,255,.72);
+    --glass-brd:rgba(255,255,255,.70);
+    --glass-shine:rgba(255,255,255,.95);
+    --inner:rgba(255,255,255,.45);
+    --page: #eef1fa;
   }
   @media (prefers-color-scheme: dark){
-    :root{--bg:#12151d;--card:#1a1f2b;--text:#eef1f7;--muted:#98a1b8;--border:#2a3040;}
+    :root{
+      --text:#f2f5ff;
+      --muted:#a8b2cf;
+      --glass:rgba(30,36,52,.52);
+      --glass-strong:rgba(34,41,60,.68);
+      --glass-brd:rgba(255,255,255,.14);
+      --glass-shine:rgba(255,255,255,.30);
+      --inner:rgba(255,255,255,.06);
+      --page:#0b0e17;
+    }
   }
   *{box-sizing:border-box}
+  html{background:var(--page)}
   body{
     margin:0;padding:32px 18px 56px;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-    background:var(--bg);color:var(--text);line-height:1.6;
+    color:var(--text);line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    background:var(--page);
+    position:relative;
+    min-height:100vh;
+    overflow-x:hidden;
   }
-  .wrap{max-width:760px;margin:0 auto}
-  .head{display:flex;align-items:center;gap:16px;margin-bottom:22px}
-  .head img{width:72px;height:72px;border-radius:18px;flex:0 0 auto;
-    box-shadow:0 6px 18px rgba(0,0,0,.10);background:var(--card)}
-  h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.01em}
+
+  /* ---- 背景光斑：液态玻璃必须有东西可"折射" ---- */
+  body::before{
+    content:"";position:fixed;inset:-25vh -25vw;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(46vw 46vw at 12% 8%,  rgba(91,140,255,.55), transparent 62%),
+      radial-gradient(40vw 40vw at 88% 14%, rgba(157,108,255,.48), transparent 62%),
+      radial-gradient(52vw 52vw at 72% 88%, rgba(64,201,255,.42),  transparent 64%),
+      radial-gradient(38vw 38vw at 8% 82%,  rgba(255,138,199,.38), transparent 62%);
+    filter:blur(42px) saturate(135%);
+    opacity:.95;
+  }
+  @media (prefers-color-scheme: dark){
+    body::before{opacity:.42;filter:blur(52px) saturate(120%)}
+  }
+
+  .wrap{max-width:760px;margin:0 auto;position:relative;z-index:1}
+
+  /* ---- 玻璃基类 ---- */
+  .glass{
+    position:relative;
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:22px;
+    -webkit-backdrop-filter:blur(26px) saturate(180%);
+    backdrop-filter:blur(26px) saturate(180%);
+    box-shadow:
+      0 10px 34px rgba(20,28,60,.13),
+      0 2px 8px rgba(20,28,60,.07),
+      inset 0 1px 0 var(--glass-shine),
+      inset 0 -1px 0 rgba(255,255,255,.14);
+  }
+  /* 顶部弧形高光：模拟玻璃边缘的镜面反射 */
+  .glass::after{
+    content:"";position:absolute;left:12px;right:12px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--glass-shine) 22%,var(--glass-shine) 78%,transparent);
+    border-radius:2px;pointer-events:none;
+  }
+
+  .head{display:flex;align-items:center;gap:16px;margin-bottom:20px;
+    padding:16px 18px;border-radius:24px}
+  .head img{width:72px;height:72px;border-radius:20px;flex:0 0 auto;
+    background:var(--inner);
+    box-shadow:0 8px 22px rgba(20,28,60,.18), inset 0 1px 0 var(--glass-shine)}
+  h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.015em;font-weight:750}
   .sub{margin:0;color:var(--muted);font-size:.94rem}
+
   .card{
-    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:22px;
     padding:20px;margin-bottom:16px;
+    position:relative;
+    -webkit-backdrop-filter:blur(26px) saturate(180%);
+    backdrop-filter:blur(26px) saturate(180%);
+    box-shadow:
+      0 10px 34px rgba(20,28,60,.13),
+      0 2px 8px rgba(20,28,60,.07),
+      inset 0 1px 0 var(--glass-shine),
+      inset 0 -1px 0 rgba(255,255,255,.14);
   }
+  .card::after{
+    content:"";position:absolute;left:12px;right:12px;top:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--glass-shine) 22%,var(--glass-shine) 78%,transparent);
+    pointer-events:none;
+  }
+
   .urlrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+
+  /* 内凹玻璃槽 */
   code.url{
     flex:1 1 260px;min-width:0;
     font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     font-size:.86rem;word-break:break-all;
-    background:var(--bg);border:1px solid var(--border);border-radius:10px;
-    padding:11px 13px;display:flex;align-items:center;
+    background:var(--inner);
+    border:1px solid var(--glass-brd);
+    border-radius:14px;
+    padding:11px 14px;display:flex;align-items:center;
+    -webkit-backdrop-filter:blur(10px);
+    backdrop-filter:blur(10px);
+    box-shadow:inset 0 1px 3px rgba(20,28,60,.10), inset 0 -1px 0 var(--glass-shine);
   }
+
   button{
-    font:inherit;font-size:.93rem;font-weight:600;cursor:pointer;
-    border:1px solid transparent;border-radius:10px;padding:11px 18px;
-    transition:transform .08s ease,opacity .15s ease;
+    font:inherit;font-size:.93rem;font-weight:650;cursor:pointer;
+    border-radius:14px;padding:11px 18px;
+    transition:transform .10s ease,box-shadow .18s ease,background .18s ease;
+    position:relative;overflow:hidden;
   }
-  button:active{transform:scale(.975)}
-  .primary{background:var(--accent);color:#fff}
-  .ghost{background:transparent;color:var(--text);border-color:var(--border)}
+  button:active{transform:scale(.972)}
+
+  /* 主按钮：玻璃球质感 */
+  .primary{
+    color:#fff;border:1px solid rgba(255,255,255,.42);
+    background:linear-gradient(150deg,
+      color-mix(in srgb,var(--accent) 88%,#fff 12%),
+      var(--accent2));
+    box-shadow:
+      0 8px 22px color-mix(in srgb,var(--accent) 42%,transparent),
+      inset 0 1px 0 rgba(255,255,255,.55),
+      inset 0 -8px 16px rgba(0,0,0,.10);
+    text-shadow:0 1px 2px rgba(0,0,0,.14);
+  }
+  /* 主按钮上的滑动高光 */
+  .primary::before{
+    content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:skewX(-18deg);transition:left .55s ease;
+  }
+  .primary:hover::before{left:120%}
+
+  .ghost{
+    color:var(--text);border:1px solid var(--glass-brd);
+    background:var(--inner);
+    -webkit-backdrop-filter:blur(12px);
+    backdrop-filter:blur(12px);
+    box-shadow:inset 0 1px 0 var(--glass-shine), 0 3px 10px rgba(20,28,60,.08);
+  }
+  .ghost:hover{background:var(--glass-strong)}
+
   .hint{color:var(--muted);font-size:.85rem;margin:12px 0 0}
+  .hint strong{color:var(--text)}
+
   .warn{
-    border-radius:12px;padding:13px 15px;font-size:.88rem;margin-bottom:16px;
-    background:#fff6e0;border:1px solid #f0d79a;color:#7a5a10;
+    border-radius:18px;padding:14px 16px;font-size:.88rem;margin-bottom:16px;
+    background:rgba(255,214,120,.34);
+    border:1px solid rgba(226,170,60,.55);
+    color:#6d4a05;
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    backdrop-filter:blur(20px) saturate(160%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.60), 0 8px 24px rgba(160,120,20,.12);
   }
   @media (prefers-color-scheme: dark){
-    .warn{background:#2e2612;border-color:#5c4a1c;color:#e8cf92}
+    .warn{background:rgba(120,92,20,.34);border-color:rgba(200,160,70,.40);color:#f0d79a}
   }
-  h2{font-size:1.05rem;margin:0 0 14px}
-  .pkg{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+
+  h2{font-size:1.05rem;margin:0 0 14px;font-weight:700}
+  h2 .cnt{color:var(--muted);font-weight:400}
+
+  /* 包卡片：更轻的一层玻璃 */
+  .pkg{
+    border:1px solid var(--glass-brd);border-radius:16px;
+    padding:14px 16px;margin-bottom:10px;
+    background:var(--inner);
+    -webkit-backdrop-filter:blur(12px);
+    backdrop-filter:blur(12px);
+    box-shadow:inset 0 1px 0 var(--glass-shine), 0 3px 12px rgba(20,28,60,.07);
+    transition:transform .16s ease, box-shadow .16s ease;
+  }
+  .pkg:hover{
+    transform:translateY(-2px);
+    box-shadow:inset 0 1px 0 var(--glass-shine), 0 10px 24px rgba(20,28,60,.14);
+  }
   .pkg:last-child{margin-bottom:0}
   .pkgtop{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
-  .pkgname{font-weight:650;font-size:.98rem}
+  .pkgname{font-weight:700;font-size:.98rem}
   .pkgver{font-family:ui-monospace,Menlo,monospace;font-size:.79rem;color:var(--muted);
-    background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:2px 8px}
+    background:var(--glass-strong);border:1px solid var(--glass-brd);
+    border-radius:8px;padding:2px 9px;
+    box-shadow:inset 0 1px 0 var(--glass-shine)}
   .pkgdesc{color:var(--muted);font-size:.87rem;margin:7px 0 0}
   .tags{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
-  .tag{font-size:.74rem;color:var(--muted);border:1px solid var(--border);
-    border-radius:999px;padding:2px 9px}
+  .tag{font-size:.74rem;color:var(--muted);border:1px solid var(--glass-brd);
+    border-radius:999px;padding:2px 10px;background:var(--inner);
+    box-shadow:inset 0 1px 0 var(--glass-shine)}
   .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:22px 0}
   ol{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted)}
   ol li{margin-bottom:7px}
   ol strong{color:var(--text);font-weight:650}
+
   .toast{
     position:fixed;left:50%;bottom:26px;transform:translate(-50%,72px);
-    background:#1c2333;color:#fff;font-size:.87rem;padding:10px 20px;border-radius:999px;
+    font-size:.87rem;padding:11px 22px;border-radius:999px;
+    color:var(--text);
+    background:var(--glass-strong);
+    border:1px solid var(--glass-brd);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    backdrop-filter:blur(24px) saturate(180%);
+    box-shadow:0 10px 30px rgba(20,28,60,.20), inset 0 1px 0 var(--glass-shine);
     opacity:0;transition:all .22s ease;pointer-events:none;z-index:9;
   }
   .toast.on{transform:translate(-50%,0);opacity:1}
+
+  /* 不支持 backdrop-filter 的老浏览器：退回不透明背景，避免文字糊在光斑上 */
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    .card,.head,.ghost,.pkg,.toast,.warn{background:rgba(255,255,255,.92)}
+    @media (prefers-color-scheme: dark){
+      .card,.head,.ghost,.pkg,.toast,.warn{background:rgba(26,32,46,.94)}
+    }
+  }
+
+  @media (max-width:520px){
+    body{padding:20px 14px 44px}
+    .head{padding:14px;border-radius:20px}
+    .head img{width:60px;height:60px;border-radius:17px}
+    h1{font-size:1.38rem}
+    .card{padding:16px;border-radius:19px}
+    .urlrow button{flex:1 1 auto}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="head">
+  <div class="head glass">
     <img src="CydiaIcon.png" alt="源图标" onerror="this.style.visibility='hidden'">
     <div>
       <h1 id="repoName">vv-ios</h1>
@@ -107,7 +274,7 @@
   </div>
 
   <div class="card">
-    <h2>软件包 <span id="pkgCount" style="color:var(--muted);font-weight:400"></span></h2>
+    <h2>软件包 <span id="pkgCount" class="cnt"></span></h2>
     <div id="pkgList"><div class="empty">加载中…</div></div>
   </div>
 
