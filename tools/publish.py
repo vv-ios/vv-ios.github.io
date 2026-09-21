@@ -54,7 +54,11 @@ def git_blob_sha(content: bytes) -> str:
 
 def remote_sha(relpath: str):
     """取远端某文件的 blob sha；不存在返回 None。"""
-    r = run(["gh", "api", f"repos/{REPO}/contents/{relpath}?ref={BRANCH}"], check=False)
+    r = subprocess.run(
+        ["gh", "api", f"repos/{REPO}/contents/{relpath}?ref={BRANCH}"],
+        cwd=ROOT, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
     if r.returncode != 0:
         return None
     try:
@@ -104,14 +108,65 @@ def upload_via_api(relpath: str, path: Path, message: str):
     print(f"  ✓ API 已更新 {relpath}")
 
 
+def ensure_pages_built(wait_seconds: int = 240):
+    """等 Pages 构建完成；卡住或 errored 时自动重置。
+
+    实测：连续多次 API 提交（每个文件一次 commit）会让 Pages 构建互相竞争，
+    出现连续 `Page build failed` 或长期卡在 `building`。
+    解法是按 skill §6.5 —— 重新 PUT 一次 Pages 配置强制重新初始化。
+    """
+    import time
+
+    deadline = time.time() + wait_seconds
+    reset_done = False
+    last = None
+
+    while time.time() < deadline:
+        r = subprocess.run(
+            ["gh", "api", f"repos/{REPO}/pages", "--jq", ".status"],
+            cwd=ROOT, capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+        )
+        status = (r.stdout or "").strip()
+        if status != last:
+            print(f"    Pages: {status}")
+            last = status
+
+        if status == "built":
+            return True
+
+        if status == "errored" and not reset_done:
+            print("    ! 构建失败，重置 Pages 配置后重试")
+            subprocess.run(
+                ["gh", "api", "-X", "PUT", f"repos/{REPO}/pages",
+                 "-f", "build_type=legacy",
+                 "-f", "source[branch]=main", "-f", "source[path]=/"],
+                cwd=ROOT, capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+            )
+            time.sleep(3)
+            subprocess.run(
+                ["gh", "api", "-X", "POST", f"repos/{REPO}/pages/builds"],
+                cwd=ROOT, capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+            )
+            reset_done = True
+
+        time.sleep(8)
+
+    print("    ! 等待 Pages 超时，请到仓库 Pages 设置查看")
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("-m", "--message", default="chore: publish repo update")
     ap.add_argument("--api-only", action="store_true", help="跳过 git push，直接用 API")
+    ap.add_argument("--no-wait", action="store_true", help="不等 Pages 构建完成")
     args = ap.parse_args()
 
     print("==> 重建索引")
-    run([sys.executable, "tools/gen_repo.py"], capture=False)
+    run([sys.executable, str(ROOT / "tools" / "gen_repo.py")], capture=False)
 
     files = changed_files()
     if not files:
@@ -146,7 +201,13 @@ def main():
     print("==> 通过 GitHub Contents API 发布")
     for rel, path in files:
         upload_via_api(rel, path, args.message)
+
+    if not args.no_wait:
+        print("==> 等待 Pages 构建")
+        ensure_pages_built()
+
     print("完成。")
+    print(f"    源地址: https://{REPO.split('/')[0]}.github.io/")
 
 
 if __name__ == "__main__":
