@@ -6,12 +6,12 @@ Codename: ios
 Architectures: iphoneos-arm64 iphoneos-arm
 Components: main
 Description: vv-ios 的越狱插件源 · Dopamine / palera1n rootless
-Date: Mon, 21 Sep 2026 03:03:31 +0000
+Date: Mon, 21 Sep 2026 03:04:17 +0000
 MD5Sum:
  a04bc70680d3d382cba1fc35f2989954 992 Packages
- a3a4f52ac6582cd022e0759952e7a230 616 Packages.gz
+ 0d93b13c568d4a19908b951bb5289c29 616 Packages.gz
  cbdd4d96d6d1768434981e3abc2f2b7a 700 Packages.bz2
 SHA256:
  7daa596db7bb085466bab0dfacd19d0ba0de52fad9a21be813d1bb22786ef8fd 992 Packages
- bf1c09cf48e09fe82c5323c1d9ac4c32544dbcf55f847b705fb2c507b3cb15a1 616 Packages.gz
+ 6586613abc152b7beab76a147d9ddb8d30fd0bfa2f22a16ea2e509552f6ca02f 616 Packages.gz
  3441181f8b351f6c8e7c45d91ad95a68d70ac85db5f20f13bff1c65c3e7289cd 700 Packages.bz2
