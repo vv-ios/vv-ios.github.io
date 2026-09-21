@@ -78,7 +78,7 @@ def changed_files():
         local = git_blob_sha(p.read_bytes())
         if local != remote_sha(name):
             out.append((name, p))
-    # debs：比对新增的
+    # debs：比对新增/修改的
     debs = ROOT / "debs"
     if debs.exists():
         for p in sorted(debs.glob("*.deb")):
@@ -86,6 +86,46 @@ def changed_files():
             if git_blob_sha(p.read_bytes()) != remote_sha(rel):
                 out.append((rel, p))
     return out
+
+
+def removed_debs():
+    """找出远端有、但本地 debs/ 已经没有的 .deb（即被删除的包）。
+
+    没有这段逻辑的话，从 debs/ 删掉文件后索引会更新，
+    但仓库里的 .deb 还留着，且 publish 不会检测到任何变化。
+    """
+    r = subprocess.run(
+        ["gh", "api", f"repos/{REPO}/contents/debs?ref={BRANCH}"],
+        cwd=ROOT, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
+    if r.returncode != 0:
+        return []  # debs/ 不存在或空仓库
+    try:
+        items = json.loads(r.stdout)
+    except Exception:
+        return []
+
+    local = {p.name for p in (ROOT / "debs").glob("*.deb")} if (ROOT / "debs").exists() else set()
+    gone = []
+    for it in items:
+        name = it.get("name", "")
+        if name.endswith(".deb") and name not in local:
+            gone.append((f"debs/{name}", it.get("sha")))
+    return gone
+
+
+def delete_via_api(relpath: str, sha: str, message: str):
+    """删除远端文件。Contents API 的 DELETE 必须带上当前 sha。"""
+    payload = {"message": message, "sha": sha, "branch": BRANCH}
+    r = subprocess.run(
+        ["gh", "api", "-X", "DELETE", f"repos/{REPO}/contents/{relpath}", "--input", "-"],
+        cwd=ROOT, input=json.dumps(payload), capture_output=True,
+        text=True, encoding="utf-8", errors="replace",
+    )
+    if r.returncode != 0:
+        raise RuntimeError(f"API 删除失败 {relpath}:\n{r.stderr}")
+    print(f"  ✓ API 已删除 {relpath}")
 
 
 def upload_via_api(relpath: str, path: Path, message: str):
@@ -169,12 +209,20 @@ def main():
     run([sys.executable, str(ROOT / "tools" / "gen_repo.py")], capture=False)
 
     files = changed_files()
-    if not files:
+    gone = removed_debs()
+
+    if not files and not gone:
         print("没有需要发布的变化。")
         return
-    print(f"==> 检测到 {len(files)} 个文件有变化:")
-    for rel, _ in files:
-        print(f"    {rel}")
+
+    if files:
+        print(f"==> 检测到 {len(files)} 个文件有变化:")
+        for rel, _ in files:
+            print(f"    {rel}")
+    if gone:
+        print(f"==> 检测到 {len(gone)} 个包已从 debs/ 移除:")
+        for rel, _ in gone:
+            print(f"    {rel}")
 
     if not args.api_only:
         print("==> 尝试 git 提交并推送")
@@ -196,11 +244,17 @@ def main():
             print("  ! 无需提交（可能已由索引重建产生相同内容）")
 
         if pushed:
+            if not args.no_wait:
+                print("==> 等待 Pages 构建")
+                ensure_pages_built()
+            print("完成。")
             return
 
     print("==> 通过 GitHub Contents API 发布")
     for rel, path in files:
         upload_via_api(rel, path, args.message)
+    for rel, sha in gone:
+        delete_via_api(rel, sha, args.message)
 
     if not args.no_wait:
         print("==> 等待 Pages 构建")
