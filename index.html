@@ -11,13 +11,15 @@
     --accent2:#9d6cff;
     --text:#12172a;
     --muted:#5d6683;
-    /* 液态玻璃：半透明表面 + 高光边 */
+    /* 液态玻璃表面 */
     --glass:rgba(255,255,255,.55);
     --glass-strong:rgba(255,255,255,.72);
     --glass-brd:rgba(255,255,255,.70);
     --glass-shine:rgba(255,255,255,.95);
     --inner:rgba(255,255,255,.45);
-    --page: #eef1fa;
+    --page:#eef1fa;
+    --radius:18px;
+    --ok:#1a9e5f;
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -29,29 +31,31 @@
       --glass-shine:rgba(255,255,255,.30);
       --inner:rgba(255,255,255,.06);
       --page:#0b0e17;
+      --ok:#4ade80;
     }
   }
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;margin:0;padding:0}
   html{background:var(--page)}
   body{
-    margin:0;padding:32px 18px 56px;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC",
+                "Helvetica Neue","Microsoft YaHei",sans-serif;
     color:var(--text);line-height:1.6;
     -webkit-font-smoothing:antialiased;
     background:var(--page);
+    padding:0 0 64px;
     position:relative;
     min-height:100vh;
     overflow-x:hidden;
   }
 
-  /* ---- 背景光斑：液态玻璃必须有东西可"折射" ---- */
+  /* 背景光斑：液态玻璃的折射源 */
   body::before{
     content:"";position:fixed;inset:-25vh -25vw;z-index:0;pointer-events:none;
     background:
-      radial-gradient(46vw 46vw at 12% 8%,  rgba(91,140,255,.55), transparent 62%),
-      radial-gradient(40vw 40vw at 88% 14%, rgba(157,108,255,.48), transparent 62%),
-      radial-gradient(52vw 52vw at 72% 88%, rgba(64,201,255,.42),  transparent 64%),
-      radial-gradient(38vw 38vw at 8% 82%,  rgba(255,138,199,.38), transparent 62%);
+      radial-gradient(46vw 46vw at 12% 6%,  rgba(91,140,255,.55), transparent 62%),
+      radial-gradient(40vw 40vw at 88% 12%, rgba(157,108,255,.48), transparent 62%),
+      radial-gradient(52vw 52vw at 72% 90%, rgba(64,201,255,.42),  transparent 64%),
+      radial-gradient(38vw 38vw at 8% 84%,  rgba(255,138,199,.38), transparent 62%);
     filter:blur(42px) saturate(135%);
     opacity:.95;
   }
@@ -59,319 +63,403 @@
     body::before{opacity:.42;filter:blur(52px) saturate(120%)}
   }
 
-  .wrap{max-width:760px;margin:0 auto;position:relative;z-index:1}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 
-  /* ---- 玻璃基类 ---- */
-  .glass{
-    position:relative;
-    background:var(--glass);
-    border:1px solid var(--glass-brd);
-    border-radius:22px;
-    -webkit-backdrop-filter:blur(26px) saturate(180%);
-    backdrop-filter:blur(26px) saturate(180%);
-    box-shadow:
-      0 10px 34px rgba(20,28,60,.13),
-      0 2px 8px rgba(20,28,60,.07),
-      inset 0 1px 0 var(--glass-shine),
-      inset 0 -1px 0 rgba(255,255,255,.14);
+  /* ---------- Hero ---------- */
+  header{
+    padding:56px 0 30px;text-align:center;position:relative;z-index:1;
   }
-  /* 顶部弧形高光：模拟玻璃边缘的镜面反射 */
-  .glass::after{
-    content:"";position:absolute;left:12px;right:12px;top:0;height:1px;
-    background:linear-gradient(90deg,transparent,var(--glass-shine) 22%,var(--glass-shine) 78%,transparent);
-    border-radius:2px;pointer-events:none;
-  }
-
-  .head{display:flex;align-items:center;gap:16px;margin-bottom:20px;
-    padding:16px 18px;border-radius:24px}
-  .head img{width:72px;height:72px;border-radius:20px;flex:0 0 auto;
+  .icon{
+    width:96px;height:96px;border-radius:26px;
+    margin:0 auto 20px;display:block;object-fit:cover;
     background:var(--inner);
-    box-shadow:0 8px 22px rgba(20,28,60,.18), inset 0 1px 0 var(--glass-shine)}
-  h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.015em;font-weight:750}
-  .sub{margin:0;color:var(--muted);font-size:.94rem}
-
-  .card{
-    background:var(--glass);
     border:1px solid var(--glass-brd);
-    border-radius:22px;
-    padding:20px;margin-bottom:16px;
-    position:relative;
-    -webkit-backdrop-filter:blur(26px) saturate(180%);
-    backdrop-filter:blur(26px) saturate(180%);
     box-shadow:
-      0 10px 34px rgba(20,28,60,.13),
-      0 2px 8px rgba(20,28,60,.07),
+      0 16px 44px rgba(91,140,255,.38),
       inset 0 1px 0 var(--glass-shine),
-      inset 0 -1px 0 rgba(255,255,255,.14);
+      0 2px 8px rgba(20,28,60,.12);
   }
-  .card::after{
-    content:"";position:absolute;left:12px;right:12px;top:0;height:1px;
-    background:linear-gradient(90deg,transparent,var(--glass-shine) 22%,var(--glass-shine) 78%,transparent);
-    pointer-events:none;
-  }
+  h1{font-size:34px;font-weight:750;letter-spacing:-.6px}
+  .sub{color:var(--muted);margin-top:10px;font-size:15px}
 
-  .urlrow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
-
-  /* 内凹玻璃槽 */
-  code.url{
-    flex:1 1 260px;min-width:0;
+  /* 源地址胶囊：内凹玻璃槽 */
+  .url{
     font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-    font-size:.86rem;word-break:break-all;
+    font-size:12.5px;color:var(--muted);
     background:var(--inner);
     border:1px solid var(--glass-brd);
-    border-radius:14px;
-    padding:11px 14px;display:flex;align-items:center;
-    -webkit-backdrop-filter:blur(10px);
-    backdrop-filter:blur(10px);
+    border-radius:999px;
+    display:inline-block;padding:8px 18px;margin-top:18px;
+    word-break:break-all;
+    -webkit-backdrop-filter:blur(14px) saturate(170%);
+    backdrop-filter:blur(14px) saturate(170%);
     box-shadow:inset 0 1px 3px rgba(20,28,60,.10), inset 0 -1px 0 var(--glass-shine);
   }
 
-  button{
-    font:inherit;font-size:.93rem;font-weight:650;cursor:pointer;
-    border-radius:14px;padding:11px 18px;
-    transition:transform .10s ease,box-shadow .18s ease,background .18s ease;
+  /* ---------- 操作按钮 ---------- */
+  .actions{display:flex;flex-direction:column;gap:12px;margin:30px 0 38px}
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:16px;border-radius:var(--radius);
+    font-size:16px;font-weight:650;text-decoration:none;
+    border:1px solid transparent;cursor:pointer;
+    transition:transform .12s ease,box-shadow .18s ease,background .18s ease;
     position:relative;overflow:hidden;
   }
-  button:active{transform:scale(.972)}
+  .btn:active{transform:scale(.98)}
 
-  /* 主按钮：玻璃球质感 */
-  .primary{
-    color:#fff;border:1px solid rgba(255,255,255,.42);
+  .btn-primary{
+    color:#fff;
+    border-color:rgba(255,255,255,.42);
     background:linear-gradient(150deg,
-      color-mix(in srgb,var(--accent) 88%,#fff 12%),
-      var(--accent2));
+      color-mix(in srgb,var(--accent) 88%,#fff 12%), var(--accent2));
     box-shadow:
-      0 8px 22px color-mix(in srgb,var(--accent) 42%,transparent),
+      0 12px 30px color-mix(in srgb,var(--accent) 42%,transparent),
       inset 0 1px 0 rgba(255,255,255,.55),
       inset 0 -8px 16px rgba(0,0,0,.10);
     text-shadow:0 1px 2px rgba(0,0,0,.14);
   }
-  /* 主按钮上的滑动高光 */
-  .primary::before{
+  /* 按钮上的滑动高光 */
+  .btn-primary::before{
     content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
     background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
     transform:skewX(-18deg);transition:left .55s ease;
   }
-  .primary:hover::before{left:120%}
+  .btn-primary:hover::before{left:120%}
 
-  .ghost{
-    color:var(--text);border:1px solid var(--glass-brd);
+  .btn-ghost{
+    color:var(--text);
     background:var(--inner);
-    -webkit-backdrop-filter:blur(12px);
-    backdrop-filter:blur(12px);
-    box-shadow:inset 0 1px 0 var(--glass-shine), 0 3px 10px rgba(20,28,60,.08);
+    border-color:var(--glass-brd);
+    -webkit-backdrop-filter:blur(14px) saturate(170%);
+    backdrop-filter:blur(14px) saturate(170%);
+    box-shadow:inset 0 1px 0 var(--glass-shine), 0 4px 14px rgba(20,28,60,.09);
   }
-  .ghost:hover{background:var(--glass-strong)}
+  .btn-ghost:hover{background:var(--glass-strong)}
 
-  .hint{color:var(--muted);font-size:.85rem;margin:12px 0 0}
-  .hint strong{color:var(--text)}
-
+  /* ---------- 警告条 ---------- */
   .warn{
-    border-radius:18px;padding:14px 16px;font-size:.88rem;margin-bottom:16px;
+    display:none;
     background:rgba(255,214,120,.34);
     border:1px solid rgba(226,170,60,.55);
     color:#6d4a05;
+    padding:14px 16px;border-radius:var(--radius);
+    font-size:14px;margin-bottom:24px;
     -webkit-backdrop-filter:blur(20px) saturate(160%);
     backdrop-filter:blur(20px) saturate(160%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.60), 0 8px 24px rgba(160,120,20,.12);
   }
+  .warn.show{display:block}
+  .warn code{
+    background:rgba(255,255,255,.45);padding:2px 7px;border-radius:6px;
+    font-size:12.5px;font-family:ui-monospace,monospace;
+  }
   @media (prefers-color-scheme: dark){
     .warn{background:rgba(120,92,20,.34);border-color:rgba(200,160,70,.40);color:#f0d79a}
+    .warn code{background:rgba(255,255,255,.12)}
   }
 
-  h2{font-size:1.05rem;margin:0 0 14px;font-weight:700}
-  h2 .cnt{color:var(--muted);font-weight:400}
+  /* ---------- 区块标题 ---------- */
+  .sec-title{
+    font-size:13px;font-weight:650;text-transform:uppercase;
+    letter-spacing:1.2px;color:var(--muted);
+    margin:8px 0 14px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
 
-  /* 包卡片：更轻的一层玻璃 */
+  /* ---------- 统计条 ---------- */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:32px}
+  .stat{
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:16px;
+    padding:15px 12px;text-align:center;
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:
+      0 8px 26px rgba(20,28,60,.12),
+      inset 0 1px 0 var(--glass-shine);
+  }
+  .stat-num{
+    font-size:20px;font-weight:750;color:var(--text);
+    font-variant-numeric:tabular-nums;line-height:1.2;
+  }
+  .stat-num.ok{color:var(--ok)}
+  .stat-label{font-size:11.5px;color:var(--muted);margin-top:3px;letter-spacing:.2px}
+
+  /* ---------- 步骤 ---------- */
+  .steps{
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:var(--radius);
+    padding:20px 22px 20px 42px;
+    margin-bottom:40px;
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:0 10px 30px rgba(20,28,60,.12), inset 0 1px 0 var(--glass-shine);
+  }
+  .steps li{margin-bottom:10px;font-size:14.5px;color:var(--muted)}
+  .steps li:last-child{margin-bottom:0}
+  .steps strong{color:var(--text);font-weight:650}
+  .steps code{
+    background:var(--inner);padding:2px 7px;border-radius:6px;
+    font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    color:var(--accent);border:1px solid var(--glass-brd);
+  }
+
+  /* ---------- 包卡片 ---------- */
   .pkg{
-    border:1px solid var(--glass-brd);border-radius:16px;
-    padding:14px 16px;margin-bottom:10px;
-    background:var(--inner);
-    -webkit-backdrop-filter:blur(12px);
-    backdrop-filter:blur(12px);
-    box-shadow:inset 0 1px 0 var(--glass-shine), 0 3px 12px rgba(20,28,60,.07);
+    background:var(--glass);
+    border:1px solid var(--glass-brd);
+    border-radius:var(--radius);
+    padding:16px 18px;margin-bottom:12px;
+    display:flex;gap:14px;align-items:flex-start;
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:0 8px 26px rgba(20,28,60,.11), inset 0 1px 0 var(--glass-shine);
     transition:transform .16s ease, box-shadow .16s ease;
   }
   .pkg:hover{
     transform:translateY(-2px);
-    box-shadow:inset 0 1px 0 var(--glass-shine), 0 10px 24px rgba(20,28,60,.14);
+    box-shadow:0 14px 34px rgba(20,28,60,.17), inset 0 1px 0 var(--glass-shine);
   }
-  .pkg:last-child{margin-bottom:0}
-  .pkgtop{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
-  .pkgname{font-weight:700;font-size:.98rem}
-  .pkgver{font-family:ui-monospace,Menlo,monospace;font-size:.79rem;color:var(--muted);
-    background:var(--glass-strong);border:1px solid var(--glass-brd);
-    border-radius:8px;padding:2px 9px;
-    box-shadow:inset 0 1px 0 var(--glass-shine)}
-  .pkgdesc{color:var(--muted);font-size:.87rem;margin:7px 0 0}
-  .tags{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
-  .tag{font-size:.74rem;color:var(--muted);border:1px solid var(--glass-brd);
-    border-radius:999px;padding:2px 10px;background:var(--inner);
-    box-shadow:inset 0 1px 0 var(--glass-shine)}
-  .empty{color:var(--muted);font-size:.9rem;text-align:center;padding:22px 0}
-  ol{margin:0;padding-left:20px;font-size:.9rem;color:var(--muted)}
-  ol li{margin-bottom:7px}
-  ol strong{color:var(--text);font-weight:650}
-
-  .toast{
-    position:fixed;left:50%;bottom:26px;transform:translate(-50%,72px);
-    font-size:.87rem;padding:11px 22px;border-radius:999px;
-    color:var(--text);
-    background:var(--glass-strong);
+  .pkg-avatar{
+    width:46px;height:46px;flex:0 0 46px;border-radius:14px;
+    background:linear-gradient(145deg,
+      color-mix(in srgb,var(--accent) 30%,transparent), var(--inner));
     border:1px solid var(--glass-brd);
-    -webkit-backdrop-filter:blur(24px) saturate(180%);
-    backdrop-filter:blur(24px) saturate(180%);
-    box-shadow:0 10px 30px rgba(20,28,60,.20), inset 0 1px 0 var(--glass-shine);
-    opacity:0;transition:all .22s ease;pointer-events:none;z-index:9;
+    display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:700;color:var(--accent);
+    box-shadow:inset 0 1px 0 var(--glass-shine);
   }
-  .toast.on{transform:translate(-50%,0);opacity:1}
+  .pkg-body{min-width:0;flex:1}
+  .pkg-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .pkg-name{font-size:16px;font-weight:650}
+  .pkg-ver{
+    font-size:12px;color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 14%,transparent);
+    padding:2px 9px;border-radius:999px;
+    font-family:ui-monospace,monospace;
+    border:1px solid var(--glass-brd);
+  }
+  .pkg-desc{font-size:13.5px;color:var(--muted);margin-top:5px}
+  .pkg-meta{font-size:12px;color:var(--muted);opacity:.78;margin-top:7px}
 
-  /* 不支持 backdrop-filter 的老浏览器：退回不透明背景，避免文字糊在光斑上 */
+  /* ---------- 空状态 ---------- */
+  .empty{
+    text-align:center;padding:48px 24px;color:var(--muted);
+    background:var(--glass);
+    border:1px dashed var(--glass-brd);
+    border-radius:var(--radius);
+    font-size:14px;line-height:1.75;
+    -webkit-backdrop-filter:blur(22px) saturate(180%);
+    backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:inset 0 1px 0 var(--glass-shine);
+  }
+  .empty-icon{
+    width:52px;height:52px;margin:0 auto 16px;border-radius:16px;
+    background:var(--inner);border:1px solid var(--glass-brd);
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;box-shadow:inset 0 1px 0 var(--glass-shine);
+  }
+  .empty strong{display:block;color:var(--text);font-size:16px;margin-bottom:10px;font-weight:650}
+  .empty code{
+    background:var(--inner);padding:2px 7px;border-radius:6px;
+    font-size:12.5px;font-family:ui-monospace,monospace;color:var(--accent);
+  }
+
+  /* 老浏览器回退：不支持 backdrop-filter 就用不透明底，避免糊在光斑上 */
   @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-    .card,.head,.ghost,.pkg,.toast,.warn{background:rgba(255,255,255,.92)}
+    .stat,.steps,.pkg,.empty,.btn-ghost,.url,.warn{background:rgba(255,255,255,.93)}
     @media (prefers-color-scheme: dark){
-      .card,.head,.ghost,.pkg,.toast,.warn{background:rgba(26,32,46,.94)}
+      .stat,.steps,.pkg,.empty,.btn-ghost,.url,.warn{background:rgba(26,32,46,.95)}
     }
   }
 
   @media (max-width:520px){
-    body{padding:20px 14px 44px}
-    .head{padding:14px;border-radius:20px}
-    .head img{width:60px;height:60px;border-radius:17px}
-    h1{font-size:1.38rem}
-    .card{padding:16px;border-radius:19px}
-    .urlrow button{flex:1 1 auto}
+    header{padding:40px 0 26px}
+    .icon{width:82px;height:82px;border-radius:22px}
+    h1{font-size:29px}
+    .actions{margin:26px 0 32px}
   }
 
-  @media (prefers-reduced-motion:reduce){
-    *{transition:none!important}
-  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
+
+<header>
+  <div class="wrap">
+    <img class="icon" src="CydiaIcon.png" alt="vv-ios" onerror="this.style.display='none'">
+    <h1 id="repoName">vv-ios</h1>
+    <p class="sub" id="repoDesc">越狱软件源</p>
+    <div class="url" id="repoUrl">加载中…</div>
+  </div>
+</header>
+
 <div class="wrap">
 
-  <div class="head glass">
-    <img src="CydiaIcon.png" alt="源图标" onerror="this.style.visibility='hidden'">
-    <div>
-      <h1 id="repoName">vv-ios</h1>
-      <p class="sub" id="repoDesc">越狱插件源</p>
+  <div class="warn" id="urlWarn">
+    源地址仍是占位符，请先修改 <code>repo.json</code> 里的 <code>url</code> 再重新生成。
+  </div>
+
+  <div class="actions">
+    <a class="btn btn-primary" id="addBtn" href="#">添加到 Sileo</a>
+    <a class="btn btn-ghost" id="copyBtn" href="#">复制源地址</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="statPkgs">0</div>
+      <div class="stat-label">软件包</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statArch">2</div>
+      <div class="stat-label">支持架构</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num ok">在线</div>
+      <div class="stat-label">源状态</div>
     </div>
   </div>
 
-  <div id="warnBox" class="warn" style="display:none">
-    <strong>⚠️ 源地址还没配置好</strong><br>
-    当前 <code>repo.json</code> 里的 <code>url</code> 还是占位符或不是 https，Sileo 无法添加此源。
-  </div>
+  <div class="sec-title">如何在设备上添加</div>
+  <ol class="steps">
+    <li>打开 <strong>Sileo</strong>，切到底部 <strong>软件源</strong> 标签。</li>
+    <li>点右上角 <code>+</code>，粘贴源地址后确认。</li>
+    <li>返回源列表下拉刷新，即可看到本源的包。</li>
+    <li>其他客户端（Zebra / Cydia / Installer）地址相同，也支持 <code>sileo://source/</code> 一键跳转。</li>
+  </ol>
 
-  <div class="card">
-    <div class="urlrow">
-      <code class="url" id="repoUrl">加载中…</code>
-      <button class="primary" id="addBtn">一键添加</button>
-      <button class="ghost" id="copyBtn">复制</button>
-    </div>
-    <p class="hint">在 Sileo 里点「一键添加」，或手动进入 <strong>软件源 → +</strong> 粘贴上面的地址。</p>
-  </div>
-
-  <div class="card">
-    <h2>软件包 <span id="pkgCount" class="cnt"></span></h2>
-    <div id="pkgList"><div class="empty">加载中…</div></div>
-  </div>
-
-  <div class="card">
-    <h2>如何添加</h2>
-    <ol>
-      <li>打开 <strong>Sileo</strong></li>
-      <li>进入 <strong>软件源</strong> 标签页</li>
-      <li>点左上角 <strong>+</strong>，粘贴上面的源地址</li>
-      <li>点 <strong>添加</strong>，然后到「全部」里安装插件</li>
-    </ol>
-  </div>
+  <div class="sec-title">软件包 <span id="pkgCount"></span></div>
+  <div id="pkgList"></div>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<!-- 用 script 引入而不是 fetch：这样双击 file:// 打开也能显示数据 -->
 <script src="repo-data.js"></script>
 <script>
-(function(){
-  var D = window.SILEO_REPO || {};
-  var url = D.url || "";
+(function () {
+  var data = window.SILEO_REPO || { name: "vv-ios", description: "越狱软件源", url: "", packages: [] };
+  var url = data.url || location.href.split("/").slice(0, -1).join("/") + "/";
+  if (url.indexOf("github.io") !== -1 && !/\/$/.test(url)) url += "/";
 
-  document.getElementById("repoName").textContent = D.name || D.label || "越狱源";
-  document.getElementById("repoDesc").textContent = D.description || "";
-  document.getElementById("repoUrl").textContent = url || "(未配置)";
-  document.title = (D.name || D.label || "越狱源") + " 源";
+  var el = function (id) { return document.getElementById(id); };
 
-  // 协议合法性与占位符判断必须分开，否则主页站（单段路径）会被误判
+  el("repoName").textContent = data.name || "vv-ios";
+  el("repoDesc").textContent = data.description || "越狱软件源";
+  el("repoUrl").textContent = url;
+  document.title = (data.name || data.label || "越狱源") + " 源";
+
+  if (data.accent) {
+    document.documentElement.style.setProperty("--accent", data.accent);
+  }
+
+  // 占位符/非法地址守卫：协议合法性 与 是否占位符 必须分开判断，
+  // 否则主页站（单段路径）会被误判成占位符。
   var isHttps = /^https:\/\/[^/]+\//.test(url);
   var isPlaceholder = /your-?name|example|<|>|\{\{/.test(url);
-  if (!isHttps || isPlaceholder || !url) {
-    document.getElementById("warnBox").style.display = "block";
+  if (!isHttps || isPlaceholder) {
+    el("urlWarn").classList.add("show");
   }
 
-  // 主页站 /user.github.io/ 与项目站 /user/repo/ 两种形态都要能匹配
-  var m = url.match(/^https:\/\/([^.]+)\.github\.io\/([^/]*)\/?$/);
-  if (m) {
-    document.title = (D.name || D.label || "越狱源") + " 源 · " + m[1];
-  }
-
-  var accent = D.accent || "#5b8cff";
-  document.documentElement.style.setProperty("--accent", accent);
-
-  // 包列表
-  var list = D.packages || [];
-  var box = document.getElementById("pkgList");
-  var cnt = document.getElementById("pkgCount");
-  if (!list.length) {
-    box.innerHTML = '<div class="empty">源里还没有软件包</div>';
-  } else {
-    cnt.textContent = "(" + list.length + ")";
-    box.innerHTML = list.map(function(p){
-      var tags = [p.version, p.architecture, p.section].filter(Boolean)
-        .map(function(t){ return '<span class="tag">' + esc(t) + '</span>'; }).join("");
-      return '<div class="pkg">' +
-        '<div class="pkgtop">' +
-          '<span class="pkgname">' + esc(p.name || p.package) + '</span>' +
-          (p.version ? '<span class="pkgver">v' + esc(p.version) + '</span>' : '') +
-        '</div>' +
-        '<p class="pkgdesc">' + esc(p.description || "") + '</p>' +
-        '<div class="tags">' + tags + '</div>' +
-      '</div>';
-    }).join("");
-  }
-
-  function esc(s){
-    return String(s == null ? "" : s)
-      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-  }
-
-  function toast(msg){
-    var t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("on");
-    setTimeout(function(){ t.classList.remove("on"); }, 1700);
-  }
-
-  document.getElementById("addBtn").addEventListener("click", function(){
-    if (!isHttps || isPlaceholder) { toast("源地址未配置好"); return; }
+  el("addBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    if (!isHttps || isPlaceholder) return;
     location.href = "sileo://source/" + encodeURIComponent(url);
   });
 
-  document.getElementById("copyBtn").addEventListener("click", function(){
-    var done = function(){ toast("已复制源地址"); };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(done, function(){ fallback(); });
+  el("copyBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    var self = this;
+    var done = function () {
+      self.textContent = "已复制 ✓";
+      setTimeout(function () { self.textContent = "复制源地址"; }, 1600);
+    };
+    if (navigator.clipboard && location.protocol === "https:") {
+      navigator.clipboard.writeText(url).then(done, function () { fallback(); });
     } else { fallback(); }
-    function fallback(){
+
+    function fallback() {
       var ta = document.createElement("textarea");
-      ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand("copy"); done(); } catch(e){ toast("复制失败，请手动选择"); }
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); } catch (err) { /* ignore */ }
       document.body.removeChild(ta);
     }
   });
+
+  var list = el("pkgList");
+  var pkgs = data.packages || [];
+
+  // --- 统计条 ---
+  el("statPkgs").textContent = pkgs.length;
+  el("pkgCount").textContent = pkgs.length ? "· " + pkgs.length + " 个" : "";
+  var archs = {};
+  pkgs.forEach(function (p) { if (p.architecture) archs[p.architecture] = 1; });
+  el("statArch").textContent = Object.keys(archs).length || 2;
+
+  if (!pkgs.length) {
+    list.innerHTML =
+      '<div class="empty">' +
+      '<div class="empty-icon">□</div>' +
+      "<strong>源里还没有软件包</strong>" +
+      "把 .deb 放进 <code>debs/</code> 目录，<br>" +
+      "然后运行 <code>python tools/publish.py</code> 发布。" +
+      "</div>";
+    return;
+  }
+
+  var frag = document.createDocumentFragment();
+  pkgs.forEach(function (p) {
+    var card = document.createElement("div");
+    card.className = "pkg";
+
+    var avatar = document.createElement("div");
+    avatar.className = "pkg-avatar";
+    avatar.textContent = (p.name || p.package || "?").charAt(0).toUpperCase();
+
+    var body = document.createElement("div");
+    body.className = "pkg-body";
+
+    var top = document.createElement("div");
+    top.className = "pkg-top";
+    var nm = document.createElement("span");
+    nm.className = "pkg-name";
+    nm.textContent = p.name || p.package;
+    top.appendChild(nm);
+    if (p.version) {
+      var ver = document.createElement("span");
+      ver.className = "pkg-ver";
+      ver.textContent = p.version;
+      top.appendChild(ver);
+    }
+    body.appendChild(top);
+
+    if (p.description) {
+      var desc = document.createElement("div");
+      desc.className = "pkg-desc";
+      desc.textContent = p.description;
+      body.appendChild(desc);
+    }
+
+    var meta = [];
+    if (p.author) meta.push(p.author);
+    if (p.size) meta.push((p.size / 1024).toFixed(1) + " KB");
+    if (p.section) meta.push(p.section);
+    if (meta.length) {
+      var md = document.createElement("div");
+      md.className = "pkg-meta";
+      md.textContent = meta.join(" · ");
+      body.appendChild(md);
+    }
+
+    card.appendChild(avatar);
+    card.appendChild(body);
+    frag.appendChild(card);
+  });
+  list.appendChild(frag);
 })();
 </script>
 </body>
