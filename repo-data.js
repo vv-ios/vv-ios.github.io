@@ -23,7 +23,19 @@ window.SILEO_REPO = {
       "size": 682,
       "filename": "./debs/com.vvios.hello_1.0.0_iphoneos-arm64.deb",
       "sha256": "8bc38a25fe861b104f82cb9a55d3a4c425ddb6a0ce78a3e16b93cedf442824d2"
+    },
+    {
+      "package": "com.vvios.statusbar",
+      "name": "StatusBar Tweak",
+      "version": "1.2.0",
+      "architecture": "iphoneos-arm64",
+      "description": "状态栏自定义插件",
+      "section": "Tweaks",
+      "author": "vv-ios",
+      "size": 810,
+      "filename": "./debs/com.vvios.statusbar_1.2.0_iphoneos-arm64.deb",
+      "sha256": "dff250cf3b992b04eeec8d29aebaa2f49df4b5083f7e69c3916993dc6986fd1e"
     }
   ],
-  "generated": 1789957675
+  "generated": 1789959811
 };
